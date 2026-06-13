@@ -45,7 +45,7 @@ Each skill is a value-add layer on top of whatever you're building — it doesn'
 Skills are grouped by **review dimension** — the lens they apply to your work. The grouping below is a starting suggestion, not a fixed schema; expect it to evolve as the library grows. The only firm rule is that each skill lives in its own self-contained folder.
 
 ```
-skills/
+skills/                   # repo root
 └── <dimension>/          # a review lens (e.g. security, performance) — open and flexible
     └── <skill-name>/
         ├── SKILL.md

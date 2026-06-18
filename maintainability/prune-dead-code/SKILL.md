@@ -1,5 +1,5 @@
 ---
-name: dead-code
+name: prune-dead-code
 description: >-
   Review a codebase for dead code (unreachable functions, unused
   imports/variables, orphaned files, leftover implementations after a refactor,

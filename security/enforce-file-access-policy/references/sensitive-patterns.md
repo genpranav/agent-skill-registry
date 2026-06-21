@@ -165,6 +165,15 @@ Rules using `../` block relative traversal above the repo root. They do not
 block absolute paths like `/etc/passwd` or `C:\Windows\System32`. Document
 this gap in the report.
 
+**Shell tool bypass:**
+`Bash` and `PowerShell` deny rules match against the full command string, not
+a file path, so per-fragment rules (as in Group B) are not applicable to them.
+The required baseline adds `Bash(*../**)` and `PowerShell(*../**)` to block
+path traversal via shell. Commands that enumerate or read files within the
+repo (`ls`, `cat`, `find`, `Get-Content`) remain unrestricted unless the user
+chooses one of the Group C hardening options in `SKILL.md` step 3. Document
+this residual exposure in the report regardless of which option is chosen.
+
 ---
 
 ## Complete required JSON array
@@ -179,6 +188,8 @@ diff individual entries against an existing array during validation.
   "Write(../**)",
   "Glob(../**)",
   "Grep(../**)",
+  "Bash(*../**)",
+  "PowerShell(*../**)",
 
   "Read(**/*password*)",
   "Edit(**/*password*)",
@@ -458,18 +469,31 @@ diff individual entries against an existing array during validation.
 ]
 ```
 
-**Total: 225 rules** (5 boundary + 44 fragments × 5 tool verbs).
+**Total: 227 rules** (5 file-tool boundary + 2 shell-tool boundary + 44 fragments × 5 tool verbs).
 
 ---
 
 ## Validation quick-reference
 
-Use this table when auditing an existing `permissions.deny` array. Tick each
-cell when the corresponding `Verb(**/*fragment*)` rule is present.
+Use these tables when auditing an existing `permissions.deny` array. Tick each
+cell when the corresponding rule is present.
+
+Boundary rules (Groups A + C):
+
+| Rule | Present |
+|---|---|
+| `Read(../**)` | ☐ |
+| `Edit(../**)` | ☐ |
+| `Write(../**)` | ☐ |
+| `Glob(../**)` | ☐ |
+| `Grep(../**)` | ☐ |
+| `Bash(*../**)` | ☐ |
+| `PowerShell(*../**)` | ☐ |
+
+Sensitive-name rules (Group B), one column per tool verb:
 
 | Fragment | Read | Edit | Write | Glob | Grep |
 |---|---|---|---|---|---|
-| `../` (boundary) | ☐ | ☐ | ☐ | ☐ | ☐ |
 | `password` | ☐ | ☐ | ☐ | ☐ | ☐ |
 | `passwords` | ☐ | ☐ | ☐ | ☐ | ☐ |
 | `passwd` | ☐ | ☐ | ☐ | ☐ | ☐ |

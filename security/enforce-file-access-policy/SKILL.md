@@ -11,9 +11,11 @@ description: >-
   what Claude can touch, set up project-level access guardrails, prevent Claude
   from reading keys or credentials, asks about permissions or access control in
   settings.json, or is worried about accidental secret exposure — even if they
-  don't say "settings" or "deny rules" explicitly. If matching deny rules
-  already exist, the skill validates each one exhaustively and reports gaps
-  without overwriting anything.
+  don't say "settings" or "deny rules" explicitly. Also audits whether
+  `Bash` and `PowerShell` tool deny rules are present, since shell commands
+  (`ls`, `cat`, `find`, `Get-Content`) can bypass file-tool restrictions
+  entirely. If matching deny rules already exist, the skill validates each
+  one exhaustively and reports gaps without overwriting anything.
 version: 0.1.0
 ---
 
@@ -29,6 +31,10 @@ This skill is a security-configuration lens. It writes or validates the
    are denied on any path whose name fragment matches the canonical list of
    secrets-related tokens (passwords, keys, credentials, tokens, and their
    common separator variants).
+3. **Shell tool bypass protection** — `Bash` and `PowerShell` deny rules block
+   path traversal via shell commands and, at the user's choice, restrict
+   file-enumeration commands (`ls`, `cat`, `find`, `Get-Content`) that
+   otherwise bypass all file-tool deny rules entirely.
 
 **detecting partial coverage**
 (rules present but missing variants or tool verbs) and **verifying the final
@@ -83,7 +89,7 @@ Read the target file. Look for `permissions.deny`. For every rule found:
 - Confirm it is syntactically valid (parseable as a JSON string, balanced
   parentheses, no stray characters).
 - Confirm the tool verb is one of the recognised values: `Read`, `Edit`,
-  `Write`, `Glob`, `Grep` (case-sensitive, exact match).
+  `Write`, `Glob`, `Grep`, `Bash`, `PowerShell` (case-sensitive, exact match).
 - Confirm the glob suffix matches the expected pattern `**/*<fragment>*`.
 - Record which (fragment × tool-verb) pairs are already covered and which are
   missing.
@@ -129,6 +135,36 @@ Grep(**/*<fragment>*)
 
 The full fragment list is in `references/sensitive-patterns.md`. Consult it —
 do not rely on memory for the complete set.
+
+**Group C — Shell tool bypass protection:**
+
+`Bash` and `PowerShell` deny rules match against the full command string, not
+a file path. Two boundary rules are always required:
+
+```json
+"Bash(*../**)",
+"PowerShell(*../**)"
+```
+
+These block shell commands containing `../`, preventing traversal above the
+repo root via shell. They do not block file-enumeration commands within the
+repo (`ls secrets/`, `cat api-key.env`, `Get-Content db_password.conf`).
+
+For enumeration hardening, present the user with these options and wait for
+an explicit choice before writing anything:
+
+- Block specific file-access shell commands — `Bash(ls *)`, `Bash(cat *)`,
+  `Bash(find *)`, `Bash(head *)`, `Bash(tail *)`, `Bash(stat *)`,
+  `PowerShell(Get-Content *)`, `PowerShell(Get-ChildItem *)`,
+  `PowerShell(dir *)`, `PowerShell(ls *)`. Blocks those commands for all
+  arguments, not only sensitive paths — avoid if Claude needs shell access
+  for normal development tasks.
+- Restrict shell entirely — `Bash(*)` and `PowerShell(*)`. Maximum isolation;
+  only viable when Claude needs no shell access in this project.
+- Accept the gap — no additional rules written; document the residual exposure
+  in the report.
+
+Do not assume the user accepts the gap. Always present all three and wait.
 
 ### 4. Determine the action
 
@@ -177,6 +213,13 @@ and run the full validation checklist. Report each item as `PASS`, `FAIL`, or
 - [ ] `Glob(../**)` present.
 - [ ] `Grep(../**)` present.
 
+**Shell tool bypass checks (Group C):**
+
+- [ ] `Bash(*../**)` present.
+- [ ] `PowerShell(*../**)` present.
+- [ ] Enumeration hardening: confirm which option the user chose and that the
+  corresponding rules are in place, or the residual gap is acknowledged.
+
 **Sensitive-name checks (Group B):**
 
 For every fragment in `references/sensitive-patterns.md`, confirm all five
@@ -213,6 +256,11 @@ Use this structure:
 - [FAIL] jwt — missing `Glob` and `Grep` rules
 - …
 
+#### Shell tool bypass
+- [PASS/FAIL] `Bash(*../**)` present
+- [PASS/FAIL] `PowerShell(*../**)` present
+- [PASS/WARN] Enumeration hardening — commands blocked / shell restricted / gap accepted
+
 #### Conflict check
 - [PASS] No allow rules conflict with deny rules
 
@@ -243,6 +291,12 @@ Final verdict:
 - **Always validate** (step 6) regardless of whether you wrote anything.
 - **Note the absolute-path gap.** Rules using `../` block relative traversal
   but not absolute paths. Say so explicitly in the report if it is relevant.
+- **Note the shell tool bypass gap.** `Bash` and `PowerShell` execute shell
+  commands that bypass all file-tool deny rules; say so in the report even
+  when Group C rules are present.
+- **Never assume the enumeration gap is acceptable.** Always present all three
+  Group C hardening options and wait for the user's explicit choice before
+  writing or omitting any Group C rules.
 
 ## Reference files
 

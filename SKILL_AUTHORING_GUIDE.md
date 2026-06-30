@@ -134,3 +134,58 @@ Matches the checklist in the repo README — every PR is reviewed against it.
 - [ ] **Deterministic checks live in scripts**; dependencies minimal and pinned
 - [ ] **Self-contained** — no dependencies on other skills' files
 - [ ] **`version` set/bumped** — no surprising or undocumented behavior changes
+
+## Runtime & installation context
+
+This library targets agents that read the shared `SKILL.md` format. A skill is
+installed by placing the skill folder itself in the agent's skills directory.
+
+**Install one skill** by copying the skill folder, not the whole repo:
+
+```bash
+# Personal: available across all your projects
+cp -r skills/<dimension>/<skill-name> ~/.claude/skills/
+
+# Project-scoped: only in this repo
+cp -r skills/<dimension>/<skill-name> .claude/skills/
+```
+
+**Or clone the whole library** as personal skills:
+
+```bash
+git clone <repo-url> ~/.claude/skills/production-readiness-skills
+```
+
+Start a new Claude Code session, then confirm it loaded:
+
+```text
+/skills
+```
+
+A skill named `security-review` becomes `/security-review`, and also auto-loads
+whenever a request matches its description.
+
+Cowork uses the same `SKILL.md` format; install by placing the skill folder in
+Cowork's skills directory the same way.
+
+### Using a skill
+
+- **Automatic:** describe the task. If it matches a skill's description, the
+  agent loads it (`check this for security issues` activates `security-review`).
+- **Direct:** invoke the slash command, such as `/security-review`.
+
+If a skill is not activating, check that its description matches the user's
+phrasing and that the session was restarted after installing.
+
+### Skill catalog
+
+The public catalog lives in `README.md`. When adding a skill, add it to the
+catalog with its dimension, skill name, and the production-readiness check it
+performs.
+
+---
+
+## Related skill registries
+
+This repo is focused on production-readiness review lenses. Related registries
+can cover adjacent agent workflows without being folded into this library.

@@ -58,70 +58,8 @@ Each skill = **one coherent review or practice**, filed under the dimension it s
 
 ---
 
-## Getting started (Claude Code)
+Other Useful skills:
 
-**Install one skill** — copy the skill folder (not the whole repo) into your skills directory:
-
-```bash
-# Personal — available across all your projects
-cp -r skills/<dimension>/<skill-name> ~/.claude/skills/
-
-# Or project-scoped — only in this repo
-cp -r skills/<dimension>/<skill-name> .claude/skills/
-```
-
-**Or clone the whole library** as personal skills:
-
-```bash
-git clone <repo-url> ~/.claude/skills/production-readiness-skills
-```
-
-Start a new Claude Code session, then confirm it loaded:
-
-```
-/skills
-```
-
-> A skill named `security-review` becomes `/security-review`, and also auto-loads whenever your request matches its description.
-
-**Cowork** uses the same `SKILL.md` format — install by placing the skill folder in Cowork's skills directory the same way.
-
----
-
-## Using a skill
-
-- **Automatic** — describe your task. If it matches a skill's description, the agent loads it (`check this for security issues` → `security-review` activates).
-- **Direct** — invoke the slash command: `/security-review`.
-
-If a skill isn't activating, check that its description matches your phrasing and that you started a fresh session after installing.
-
----
-
-## Skill catalog
-
-| Dimension | Skill | What it checks |
-|-----------|-------|----------------|
-
----
-
-## Contributing
-
-New review skills and improvements are welcome. Before opening a PR:
-
-1. Read **[SKILL_AUTHORING_GUIDE.md](./SKILL_AUTHORING_GUIDE.md)** for the conventions.
-2. File your skill under the right `skills/<dimension>/` folder.
-3. Make sure it passes the review checklist below.
-
-### Review checklist
-
-Every PR is reviewed against this. Keeping it visible makes reviews transparent.
-
-- [ ] **One clear review/practice** — folder lives under the correct `<dimension>/`
-- [ ] **Description states what + when** — pushy enough to trigger, distinct from existing skills (no overlap)
-- [ ] **Body is imperative and lean** (< 500 lines), explains *why*, not just `MUST`
-- [ ] **Asks the right questions** — surfaces the gaps a vibe-coded solution typically misses in this dimension
-- [ ] **References pointed to explicitly** — skill works even if they aren't auto-loaded
-- [ ] **Deterministic checks live in scripts**; dependencies minimal and pinned
-- [ ] **Self-contained** — no dependencies on other skills' files
-- [ ] **Actionable output** — flags issues *and* tells the user how to fix them
-- [ ] **`version` set/bumped** — no surprising or undocumented behavior changes
+| Skill                                                  | Purpose                                         |
+|--------------------------------------------------------|-------------------------------------------------|
+| [Ponytail](https://github.com/DietrichGebert/ponytail) | Achieve the goal with the fewest possible lines of code without compromising security or core functionality |

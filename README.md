@@ -58,8 +58,11 @@ Each skill = **one coherent review or practice**, filed under the dimension it s
 
 ---
 
-Other Useful skills:
+## 🔗 Other Useful Skills
+
+Complementary skills from the wider community that pair well with this library:
 
 | Skill                                                  | Purpose                                         |
 |--------------------------------------------------------|-------------------------------------------------|
-| [Ponytail](https://github.com/DietrichGebert/ponytail) | Achieve the goal with the fewest possible lines of code without compromising security or core functionality |
+| [Ponytail](https://github.com/DietrichGebert/ponytail)| Prevent overengineering with lower loc |
+| [Hallmark](https://github.com/nutlope/hallmark) | Anti-AI generated UI design |

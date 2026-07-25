@@ -67,3 +67,4 @@ Complementary skills from the wider community that pair well with this library:
 | [Ponytail](https://github.com/DietrichGebert/ponytail)| Prevent overengineering with lower loc |
 | [Hallmark](https://github.com/nutlope/hallmark) | Anti-AI generated UI design |
 | [Teach](https://github.com/mattpocock/skills/tree/main/skills/productivity/teach) | Multi-session, mission-grounded learning through interactive lessons |
+| [Find Skills](https://github.com/vercel-labs/skills/tree/main/skills/find-skills) | Search the open skills ecosystem for an existing skill before building one |

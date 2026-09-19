@@ -1,3 +1,6 @@
 # Claude Code local config — intentionally NOT shipped.
 # Permissions, hooks, and allowed commands are a judgement call each user
 .claude/
+
+# mac 
+.DS_Store
